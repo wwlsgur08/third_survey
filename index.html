@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>추적 설문조사</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: #f4f4f9; color: #333; line-height: 1.6; }
+        .survey-container { max-width: 760px; margin: 40px auto; padding: 20px 40px; background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h1, h2, h3 { color: #2c3e50; }
+        h3 { margin-top: 40px; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+        .progress-bar { width: 100%; background-color: #eee; border-radius: 10px; margin: 20px 0; }
+        .progress { width: 0%; height: 10px; background-color: #3498db; border-radius: 10px; transition: width 0.4s ease; }
+        .question-group { margin-bottom: 25px; border-left: 3px solid #3498db; padding-left: 15px; }
+        .question-group p b { font-size: 1.1em; } /* 질문 텍스트는 약간 크게 유지 */
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        .input-item, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { resize: vertical; min-height: 100px; }
+        .radio-group label, .checkbox-group label { font-weight: normal; display: flex; align-items: center; margin-bottom: 5px; }
+        .radio-group input, .checkbox-group input { margin-right: 10px; }
+        .btn-container { text-align: right; margin-top: 30px; }
+        button { padding: 12px 25px; border: none; background-color: #3498db; color: white; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
+        button:hover { background-color: #2980b9; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        .required-mark { color: #e74c3c; margin-left: 4px; }
+        .hidden { display: none; }
+        .likert-scale { display: flex; justify-content: space-around; list-style-type: none; padding: 0; margin: 10px 0; }
+        .likert-scale li { text-align: center; }
+        .likert-scale input[type="radio"] { display: block; margin: 0 auto 5px; }
+        .likert-scale li label {
+            font-size: 14px;
+            font-weight: 400;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="survey-container">
+        <h1>추적 설문조사</h1>
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+
+        <form id="survey-form">
+            <!-- 페이지 1: 연구 동의 -->
+            <div id="page-1" class="page active">
+                <h2>① 연구 참여 동의서</h2>
+                <div style="border: 1px solid #ddd; padding: 15px; border-radius: 5px; background-color: #fafafa; max-height: 300px; overflow-y: auto;">
+                    <p>안녕하세요. 본 설문은 '매력 탐구 프로그램'의 효과성을 검증하기 위한 연구의 일환으로 진행됩니다. 참여에 앞서 아래 내용을 충분히 읽어보신 후, 동의 여부를 결정해주시기 바랍니다. 설문 참여에는 약 10~15분이 소요됩니다.</p>
+                    <h4 style="margin-bottom: 5px;">1. 익명성 보장 및 정보 보호</h4>
+                    <p style="margin-top: 5px;">본 설문은 철저히 <strong>익명</strong>으로 진행됩니다. 총 50명 이상의 참여자로부터 데이터를 수집하므로, 제출된 정보만으로 특정 인물을 식별하는 것은 불가능에 가깝습니다. 그러니 안심하고 솔직하게 답변해주셔도 괜찮습니다.</p>
+                    <p>수집된 모든 정보는 연구 목적의 통계 자료로만 활용되며, 향후 전시 및 논문 작성에 사용될 수 있습니다. 응답 내용은 이 외의 다른 목적으로 사용되거나 외부에 유출되는 일은 절대 없음을 약속드립니다.</p>
+                    <h4 style="margin-bottom: 5px;">2. 수집되는 정보의 범위</h4>
+                    <p style="margin-top: 5px;">본 연구에서는 <strong>사전/사후 설문조사의 응답 내용만 저장 및 분석</strong>합니다. 설문 외에 진행되는 '매력 탐구 프로그램' 과정에서 작성하시는 개인적인 성향, 경험, 과거사 등의 내용은 <strong>절대 저장되거나 수집되지 않습니다.</strong> 따라서 모든 과정에서 안심하고 솔직하게 참여하셔도 괜찮습니다.</p>
+                    <h4 style="margin-bottom: 5px;">3. 자발적 참여 및 참여자의 권리</h4>
+                    <p style="margin-top: 5px;">본 설문 참여는 전적으로 자발적입니다. 원하지 않으실 경우, 언제든지 설문을 중단할 수 있으며, 중단으로 인한 어떠한 불이익도 없습니다.</p>
+                    <h4 style="margin-bottom: 5px;">4. 동의 확인</h4>
+                    <p style="margin-top: 5px;">위의 모든 내용을 충분히 이해하셨으며, 연구 참여에 자발적으로 동의하십니까?</p>
+                </div>
+                <div class="checkbox-group" style="margin-top: 20px;">
+                    <label>
+                        <input type="checkbox" id="consent-check" name="consent"> 위 내용을 모두 확인했으며, 연구 참여에 동의합니다.
+                    </label>
+                </div>
+            </div>
+
+            <!-- 페이지 2: 인구통계 -->
+            <div id="page-2" class="page">
+                <h2>② 인구통계 정보</h2>
+                <div class="question-group">
+                    <label for="anonymous-nickname">익명 닉네임 (추격연구용)<span class="required-mark">*</span></label>
+                    <input type="text" id="anonymous-nickname" name="anonymousNickname" class="input-item" required>
+                    <small style="color: #666; font-size: 13px;">사후 설문조사에서 동일한 닉네임을 입력해주세요. <strong>단순하고 기억하기 쉽게</strong> 지어주세요.<br>예: 고양이123, 바나나77, 커피25 등 (개인정보와 무관한 단어+숫자 조합)</small>
+                </div>
+            </div>
+
+            <!-- 페이지 3: 기본 성향 -->
+            <div id="page-3" class="page">
+                <h2>③ 기본 성향</h2>
+                <div class="question-group">
+                    <label for="personality">평소 나의 성격을 가장 잘 설명하는 단어는?<span class="required-mark">*</span></label>
+                    <select id="personality" name="personality" class="input-item" required>
+                        <option value="">선택하세요</option>
+                        <option value="낙관적">낙관적(긍정적·활달)</option>
+                        <option value="현실적">현실적(객관·실용)</option>
+                        <option value="신중">신중(조심·계획)</option>
+                        <option value="냉소적">냉소적(회의·비판)</option>
+                    </select>
+                </div>
+                <div class="question-group">
+                    <label for="self-esteem-source">평소 나는 자기존중감을 주로 어디서 얻는가?<span class="required-mark">*</span></label>
+                    <select id="self-esteem-source" name="selfEsteemSource" class="input-item" required>
+                        <option value="">선택하세요</option>
+                        <option value="타인의 인정">타인의 인정</option>
+                        <option value="개인적 성장/역량">개인적 성장/역량</option>
+                        <option value="친밀한 관계/소속감">친밀한 관계/소속감</option>
+                        <option value="외적 성과/지위/외모">외적 성과/지위/외모</option>
+                        <option value="가치 실현/기여감">가치 실현/기여감</option>
+                    </select>
+                </div>
+                <div class="question-group">
+                    <label>평소 감정 표현 스타일 (최대 2개 선택 가능)<span class="required-mark">*</span></label>
+                    <div class="checkbox-group" id="emotion-style-group">
+                        <label><input type="checkbox" name="emotion-style" value="즉시/솔직 표현형"> 즉시·솔직 표현형</label>
+                        <label><input type="checkbox" name="emotion-style" value="필터/조절 표현형"> 필터·조절 표현형</label>
+                        <label><input type="checkbox" name="emotion-style" value="간접/우회 표현형"> 간접·우회 표현형</label>
+                        <label><input type="checkbox" name="emotion-style" value="억제/내면화형"> 억제·내면화형</label>
+                        <label><input type="checkbox" name="emotion-style" value="상황에 따라 유연히"> 상황에 따라 유연히</label>
+                    </div>
+                </div>
+                 <div class="question-group">
+                   <label for="self-definition">나에 대해 자유롭게 한 문장으로 정의해보세요!<span class="required-mark">*</span></label>
+                   <textarea id="self-definition" name="selfDefinition" class="input-item" required></textarea>
+                </div>
+            </div>
+
+            <!-- 페이지 4: 핵심 38문항 -->
+            <div id="page-4" class="page">
+                <h2>④ 핵심 문항</h2>
+                <p>다음 문항들은 1점에서 4점까지 선택해주세요.<br><b>(1) 전혀 아니다 (2) 아니다 (3) 그렇다 (4) 매우 그렇다</b></p>
+                <script type="text/template" id="likert-question-template">
+                    <div class="question-group" data-qid="{qid}" data-reverse="{is-reverse}">
+                        <p><b>{q-text}</b><span class="required-mark">*</span></p>
+                        <ul class="likert-scale">
+                            <li><label><input type="radio" name="{qid}" value="1" required>전혀 아니다</label></li>
+                            <li><label><input type="radio" name="{qid}" value="2">아니다</label></li>
+                            <li><label><input type="radio" name="{qid}" value="3">그렇다</label></li>
+                            <li><label><input type="radio" name="{qid}" value="4">매우 그렇다</label></li>
+                        </ul>
+                    </div>
+                </script>
+                <div id="likert-questions-container">
+                    <!-- JavaScript로 문항이 채워질 영역 -->
+                </div>
+            </div>
+
+            <!-- 페이지 5: 추가 설문 -->
+            <div id="page-5" class="page">
+                <h2>⑤ 추가 설문</h2>
+
+                <h3>B. 지난 3주간의 경험에 대한 설문</h3>
+                <div class="question-group">
+                    <label for="followup-q1">1. 지난 3주간, 일상생활 속에서 자신의 '내적 매력'을 스스로 인지하거나 떠올렸던 순간이 있다면 구체적으로 작성해주세요. (예: 업무 중, 친구와의 대화 중 등)<span class="required-mark">*</span></label>
+                    <textarea id="followup-q1" name="followup_q1" class="input-item" required></textarea>
+                </div>
+                <div class="question-group">
+                    <p><b>2. 3주 전 프로그램을 처음 마쳤을 때와 비교하여, 현재 나는 나의 '내적 매력'에 대해 더 깊이 이해하고 있다고 느낀다.</b><span class="required-mark">*</span></p>
+                    <ul class="likert-scale">
+                        <li><label><input type="radio" name="followup_q2" value="1" required>전혀 그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q2" value="2">그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q2" value="3">그렇다</label></li>
+                        <li><label><input type="radio" name="followup_q2" value="4">매우 그렇다</label></li>
+                    </ul>
+                </div>
+                <div class="question-group">
+                    <p><b>3. 3주간 매일 제공된 '1일 1매력 질문'은 나의 강점과 긍정적인 면을 꾸준히 상기하는 데 도움이 되었다.</b><span class="required-mark">*</span></p>
+                    <ul class="likert-scale">
+                        <li><label><input type="radio" name="followup_q3" value="1" required>전혀 그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q3" value="2">그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q3" value="3">그렇다</label></li>
+                        <li><label><input type="radio" name="followup_q3" value="4">매우 그렇다</label></li>
+                    </ul>
+                </div>
+                <div class="question-group">
+                    <label>4. '1일 1매력 질문'에 참여하는 것은 주로 어떻게 느껴졌나요?<span class="required-mark">*</span></label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="followup_q4" value="긍정적인 자극이 되었다" required> 긍정적인 자극이 되었다</label>
+                        <label><input type="radio" name="followup_q4" value="흥미로운 습관이 되었다"> 흥미로운 습관이 되었다</label>
+                        <label><input type="radio" name="followup_q4" value="가끔은 부담스러웠다"> 가끔은 부담스러웠다</label>
+                        <label><input type="radio" name="followup_q4" value="거의 참여하지 못했다"> 거의 참여하지 못했다</label>
+                    </div>
+                </div>
+
+                <h3>C. 변화에 대한 설문</h3>
+                <div class="question-group">
+                    <p><b>5. 'Aster'를 통해 나 자신을 더 긍정적으로 이해하게 된 후, 이전보다 스스로를 더 믿고 새로운 것에 도전하거나 어려운 일을 해결하려는 의지가 생겼다.</b><span class="required-mark">*</span></p>
+                    <ul class="likert-scale">
+                        <li><label><input type="radio" name="followup_q5" value="1" required>전혀 그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q5" value="2">그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q5" value="3">그렇다</label></li>
+                        <li><label><input type="radio" name="followup_q5" value="4">매우 그렇다</label></li>
+                    </ul>
+                </div>
+                <div class="question-group">
+                    <label for="followup-q6">6. 지난 3주간, 스스로에게 실망하거나 어려운 상황에 부딪혔을 때, 자신을 대하는 생각이나 태도에 이전과 다른 긍정적인 변화가 있었다면 어떤 것이었나요?<span class="required-mark">*</span></label>
+                    <textarea id="followup-q6" name="followup_q6" class="input-item" required></textarea>
+                </div>
+                <div class="question-group">
+                    <label for="followup-q7">7. 지난 3주간, 타인과의 관계(친구, 가족, 동료 등)에서 이전보다 조금 더 편안하거나 자신감 있게 행동했던 경험이 있다면 간략하게 작성해주세요.<span class="required-mark">*</span></label>
+                    <textarea id="followup-q7" name="followup_q7" class="input-item" required></textarea>
+                </div>
+
+                <h3>D. 종합적인 의견에 대한 설문</h3>
+                <div class="question-group">
+                    <p><b>8. 'Aster'의 경험은 내가 이미 가지고 있던 장점들을 '매력'이라는 새로운 관점으로 바라보게 함으로써, 나 자신을 더 아끼고 소중하게 생각하는 계기가 되었다.</b><span class="required-mark">*</span></p>
+                    <ul class="likert-scale">
+                        <li><label><input type="radio" name="followup_q8" value="1" required>전혀 그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q8" value="2">그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q8" value="3">그렇다</label></li>
+                        <li><label><input type="radio" name="followup_q8" value="4">매우 그렇다</label></li>
+                    </ul>
+                </div>
+                <div class="question-group">
+                    <p><b>9. 'Aster'를 통해 얻은 자기 이해는 나의 미래(진로, 목표, 계획 등)를 긍정적으로 그리는 데 도움이 되었다.</b><span class="required-mark">*</span></p>
+                    <ul class="likert-scale" id="followup-q9-group">
+                        <li><label><input type="radio" name="followup_q9" value="1" required>전혀 그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q9" value="2">그렇지 않다</label></li>
+                        <li><label><input type="radio" name="followup_q9" value="3">그렇다</label></li>
+                        <li><label><input type="radio" name="followup_q9" value="4">매우 그렇다</label></li>
+                    </ul>
+                </div>
+                <div id="followup-q10-group" class="question-group hidden">
+                    <label for="followup-q10">10. 위 질문(9번)에 '그렇다' 또는 '매우 그렇다'로 답변하셨다면, 구체적으로 어떤 면에서 도움이 되었는지 자유롭게 작성해주세요.<span class="required-mark">*</span></label>
+                    <textarea id="followup-q10" name="followup_q10" class="input-item"></textarea>
+                </div>
+                <div class="question-group">
+                    <label for="followup-q11">11. 'Aster' 프로젝트 경험을 통해 얻은 가장 큰 수확이나 가장 인상 깊었던 점은 무엇인가요?<span class="required-mark">*</span></label>
+                    <textarea id="followup-q11" name="followup_q11" class="input-item" required></textarea>
+                </div>
+                <div class="question-group">
+                    <label for="followup-q12">12. 만약 당신의 '별자리'가 실제 제품(예: 반지, 목걸이 등)으로 만들어진다면, 그것을 소유하거나 착용하고 싶으신가요? 그 이유는 무엇인가요?<span class="required-mark">*</span></label>
+                    <textarea id="followup-q12" name="followup_q12" class="input-item" required></textarea>
+                </div>
+            </div>
+
+            <!-- 페이지 6: 감사 메시지 -->
+            <div id="page-6" class="page">
+                <h2>설문 완료</h2>
+                <p>설문에 참여해주셔서 진심으로 감사합니다. 귀하의 소중한 응답은 연구에 큰 도움이 될 것입니다.</p>
+            </div>
+
+            <!-- 네비게이션 버튼 -->
+            <div class="btn-container">
+                <button type="button" id="prev-btn" class="hidden">이전</button>
+                <button type="button" id="next-btn">동의하고 시작하기</button>
+                <button type="submit" id="submit-btn" class="hidden">제출</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>
